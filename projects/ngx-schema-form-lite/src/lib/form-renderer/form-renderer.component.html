@@ -7,6 +7,8 @@
     
     <label>{{ item.value.title }}</label>
     
+    <ng-container *ngComponentOutlet="item.component"></ng-container>
+
   </div>
 
 </ng-container>

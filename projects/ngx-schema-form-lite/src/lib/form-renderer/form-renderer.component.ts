@@ -1,5 +1,6 @@
-import { Component, computed, input } from '@angular/core'; // <--- 引入 input, computed
+import { Component, computed, input, inject, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { WidgetRegistryService } from '../registry/widget-registry.service';
 
 export interface FormSchema {
   properties: { [key: string]: any };
@@ -25,24 +26,33 @@ export interface FormSchema {
   ],
 })
 export class FormRendererComponent {
-  // Angular 19 Signal Input
-  // 以前是: @Input() schema: FormSchema | null = null;
+  // 1. 注入注册表服务
+  private registry = inject(WidgetRegistryService);
+
   schema = input<FormSchema | null>(null);
 
-  // 使用 computed 自动派生数据(以前需要用 ngOnChanges 手动更新)
-  // 当 schema 变化时，这个 renderItems 信号会自动更新
   renderItems = computed(() => {
     const s = this.schema();
     if (!s || !s.properties) return [];
 
     return Object.keys(s.properties).map((key) => {
       const prop = s.properties[key];
+      const widgetName = prop.widget || 'string'; // 简单的默认值处理
+
+      // 2. 尝试获取组件类
+      // 这里的 try-catch 是为了防止测试中某些 widget 没注册导致整个页面崩溃
+      let componentClass: Type<any> | null = null;
+      try {
+        componentClass = this.registry.getWidget(widgetName);
+      } catch (e) {
+        console.warn(`Widget type "${widgetName}" not found.`);
+      }
+
       return {
         key,
         value: prop,
-        // 预先计算好样式字符串，模板里直接用
-        // 如果没有 ui.span，默认占满 12 列
         gridSpan: `span ${prop.ui?.span || 12}`,
+        component: componentClass, // <--- 3. 把组件类传递给模板
       };
     });
   });
