@@ -1,0 +1,12 @@
+<ng-container *ngFor="let item of renderItems()">
+  
+  <div 
+    [attr.data-path]="item.key" 
+    class="sf-item"
+    [style.grid-column]="item.gridSpan">
+    
+    <label>{{ item.value.title }}</label>
+    
+  </div>
+
+</ng-container>

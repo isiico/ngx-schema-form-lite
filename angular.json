@@ -3,5 +3,38 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
+    "ngx-schema-form-lite": {
+      "projectType": "library",
+      "root": "projects/ngx-schema-form-lite",
+      "sourceRoot": "projects/ngx-schema-form-lite/src",
+      "prefix": "ngx-schema-form-lite",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngx-schema-form-lite/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-schema-form-lite/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngx-schema-form-lite/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/ngx-schema-form-lite/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    }
   }
 }
